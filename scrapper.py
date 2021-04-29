@@ -2,6 +2,49 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
+#Texting Stuff
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from smtplib import SMTP
+import smtplib
+import sys
+
+
+recipients = ['schefferandrew66@gmail.com'] 
+emaillist = [elem.strip().split(',') for elem in recipients]
+msg = MIMEMultipart()
+msg['Subject'] = "PRIMERS UPDATE"
+msg['From'] = 'schefferandrew66@gmail.com'
+
+
+
+def sendEmail(df_test):
+    html = """\
+    <html>
+    <head></head>
+    <body>
+        {0}
+    </body>
+    </html>
+    """.format(df_test.to_html())
+
+    part1 = MIMEText(html, 'html')
+    msg.attach(part1)
+
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    
+    server.starttls()
+    server.ehlo()
+    server.login('schefferandrew66@gmail.com', 'Scheffer1!')
+
+    server.sendmail(msg['From'], emaillist , msg.as_string())
+    server.close()
+
+    print("Done")
+
+
+
 
 baseurl = "https://www.brownells.com"
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'}
@@ -43,7 +86,16 @@ for product in productlist:
         data.append(primer)
 
 df = pd.DataFrame(data)
-print(df)
+
+inStock = df[df["Availability"] == "(Out of Stock)"]
+if df.empty:
+    print("There is Nothing here")
+
+else:
+    sendEmail(df)
+
+print(inStock)
+
 
 
 
