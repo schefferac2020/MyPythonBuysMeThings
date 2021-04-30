@@ -17,17 +17,12 @@ import smtplib
 import sys
 
 
-
-
-
-
-
 def sendEmail(df_test):
-    recipients = ['email'] 
+    recipients = ['schefferandrew66@gmail.com'] 
     emaillist = [elem.strip().split(',') for elem in recipients]
     msg = MIMEMultipart()
     msg['Subject'] = "PRIMERS UPDATE"
-    msg['From'] = 'email'
+    msg['From'] = 'schefferandrew66@gmail.com'
 
     html = """\
     <html>
@@ -45,7 +40,7 @@ def sendEmail(df_test):
     
     server.starttls()
     server.ehlo()
-    server.login('email', 'password')
+    server.login('schefferandrew66@gmail.com', 'Scheffer1!')
 
     server.sendmail(msg['From'], emaillist , msg.as_string())
     server.close()
